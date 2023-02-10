@@ -8,5 +8,7 @@
         public string Email { get; set; }
 
         public Adress Adress { get; set; }
+
+        public List<WorkItem> WorkItems { get; set; } = new List<WorkItem>();
     }
 }

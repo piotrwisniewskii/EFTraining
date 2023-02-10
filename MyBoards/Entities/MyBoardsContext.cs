@@ -29,6 +29,16 @@ namespace MyBoards.Entities
                 eb.Property(wi => wi.Activity).HasMaxLength(200);
                 eb.Property(wi => wi.RemainingWork).HasPrecision(14, 2);
                 eb.Property(wi=>wi.Priority).HasDefaultValue(1);
+
+                //Relation Configuration
+                eb.HasMany(w => w.Comments)
+                .WithOne(c => c.WorkItem)
+                .HasForeignKey(c=>c.WorkItem.Id);
+
+                eb.HasOne(w => w.Author)
+                .WithMany(u => u.WorkItems)
+                .HasForeignKey(w => w.AuthorId);
+               
             });
 
             modelBuilder.Entity<Comment>(eb =>
@@ -36,6 +46,11 @@ namespace MyBoards.Entities
                 eb.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
                 eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
             });
+
+            modelBuilder.Entity<User>()
+                .HasOne(u => u.Adress)
+                .WithOne(u => u.User)
+                .HasForeignKey<Adress>(a => a.UserId);
         }
     }
 }

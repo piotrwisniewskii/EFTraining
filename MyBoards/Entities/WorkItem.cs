@@ -26,9 +26,14 @@ namespace MyBoards.Entities
         public decimal Efford { get; set; }
         //Task
         public string Activity { get; set; }
-
         public decimal RemainingWork { get; set; }
 
         public string Type { get; set; }
+
+        public List<Comment> Comments { get; set; } = new List<Comment>();
+        public User Author { get; set; }
+        public Guid AuthorId { get; set; }
+
+
     }
 }
