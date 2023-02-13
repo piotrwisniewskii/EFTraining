@@ -6,7 +6,7 @@ namespace MyBoards.Entities
 {
     public abstract class WorkItem
     {
-        [Key]
+
         public int Id { get; set; }
         public string Area { get; set; }
         public string IterationPath { get; set; }
