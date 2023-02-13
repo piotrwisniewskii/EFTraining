@@ -28,7 +28,7 @@ namespace MyBoards.Entities
             
                 .Property(s => s.Value)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(60);
 
             modelBuilder.Entity<Epic>()
                 .Property(wi => wi.EndDate)
