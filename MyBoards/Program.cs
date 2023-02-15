@@ -58,6 +58,12 @@ if(!users.Any())
     dbContext.SaveChanges();
 }
 
+app.MapGet("data", (MyBoardsContext db) =>
+{
+    var tags = db.Tags.ToList();
+    return tags;
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 

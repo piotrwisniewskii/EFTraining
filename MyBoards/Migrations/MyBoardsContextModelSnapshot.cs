@@ -176,16 +176,11 @@ namespace MyBoards.Migrations
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("WorkItemStateId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("StateId");
-
-                    b.HasIndex("WorkItemStateId");
 
                     b.ToTable("WorkItems");
 
@@ -332,10 +327,6 @@ namespace MyBoards.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBoards.Entities.WorkItemState", null)
-                        .WithMany("WorkItems")
-                        .HasForeignKey("WorkItemStateId");
-
                     b.Navigation("Author");
 
                     b.Navigation("State");
@@ -372,11 +363,6 @@ namespace MyBoards.Migrations
             modelBuilder.Entity("MyBoards.Entities.WorkItem", b =>
                 {
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("MyBoards.Entities.WorkItemState", b =>
-                {
-                    b.Navigation("WorkItems");
                 });
 #pragma warning restore 612, 618
         }

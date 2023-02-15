@@ -12,7 +12,7 @@ using MyBoards.Entities;
 namespace MyBoards.Migrations
 {
     [DbContext(typeof(MyBoardsContext))]
-    [Migration("20230215091415_init")]
+    [Migration("20230215104025_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -103,6 +103,33 @@ namespace MyBoards.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Tags");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "Web"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Value = "UI"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Value = "Desktop"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Value = "API"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Value = "Service"
+                        });
                 });
 
             modelBuilder.Entity("MyBoards.Entities.User", b =>
@@ -152,16 +179,11 @@ namespace MyBoards.Migrations
                     b.Property<int>("StateId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("WorkItemStateId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
 
                     b.HasIndex("StateId");
-
-                    b.HasIndex("WorkItemStateId");
 
                     b.ToTable("WorkItems");
 
@@ -186,6 +208,23 @@ namespace MyBoards.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("WorkItemsStates");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Value = "To Do"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Value = "Doing"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Value = "Done"
+                        });
                 });
 
             modelBuilder.Entity("MyBoards.Entities.WorkItemTag", b =>
@@ -291,10 +330,6 @@ namespace MyBoards.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MyBoards.Entities.WorkItemState", null)
-                        .WithMany("WorkItems")
-                        .HasForeignKey("WorkItemStateId");
-
                     b.Navigation("Author");
 
                     b.Navigation("State");
@@ -331,11 +366,6 @@ namespace MyBoards.Migrations
             modelBuilder.Entity("MyBoards.Entities.WorkItem", b =>
                 {
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("MyBoards.Entities.WorkItemState", b =>
-                {
-                    b.Navigation("WorkItems");
                 });
 #pragma warning restore 612, 618
         }

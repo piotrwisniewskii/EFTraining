@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace MyBoards.Migrations
 {
     /// <inheritdoc />
@@ -84,7 +86,6 @@ namespace MyBoards.Migrations
                     AuthorId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     StateId = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    WorkItemStateId = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2(3)", precision: 3, nullable: true),
                     Efford = table.Column<decimal>(type: "decimal(5,2)", nullable: true),
@@ -106,11 +107,6 @@ namespace MyBoards.Migrations
                         principalTable: "WorkItemsStates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_WorkItems_WorkItemsStates_WorkItemStateId",
-                        column: x => x.WorkItemStateId,
-                        principalTable: "WorkItemsStates",
-                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -166,6 +162,28 @@ namespace MyBoards.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Tags",
+                columns: new[] { "Id", "Value" },
+                values: new object[,]
+                {
+                    { 1, "Web" },
+                    { 2, "UI" },
+                    { 3, "Desktop" },
+                    { 4, "API" },
+                    { 5, "Service" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "WorkItemsStates",
+                columns: new[] { "Id", "Value" },
+                values: new object[,]
+                {
+                    { 1, "To Do" },
+                    { 2, "Doing" },
+                    { 3, "Done" }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Adresses_UserId",
                 table: "Adresses",
@@ -191,11 +209,6 @@ namespace MyBoards.Migrations
                 name: "IX_WorkItems_StateId",
                 table: "WorkItems",
                 column: "StateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkItems_WorkItemStateId",
-                table: "WorkItems",
-                column: "WorkItemStateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkItemTag_WorkItemId",
