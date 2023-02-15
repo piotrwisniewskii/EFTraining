@@ -88,12 +88,18 @@ namespace MyBoards.Entities
             {
                 eb.Property(x => x.CreatedDate).HasDefaultValueSql("getutcdate()");
                 eb.Property(x => x.UpdatedDate).ValueGeneratedOnUpdate();
+
+                eb.HasOne(c => c.Author)
+                .WithMany(a => a.Comments)
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.NoAction);
             });
 
             modelBuilder.Entity<User>()
                 .HasOne(u => u.Adress)
                 .WithOne(u => u.User)
                 .HasForeignKey<Adress>(a => a.UserId);
+
         }
     }
 }
