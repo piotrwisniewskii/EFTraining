@@ -105,6 +105,12 @@ namespace MyBoards.Entities
                 .WithOne(u => u.User)
                 .HasForeignKey<Adress>(a => a.UserId);
 
+            modelBuilder.Entity<Tag>()
+                .HasData(new Tag() { Id = 1, Value = "Web" },
+                new Tag() { Id = 2, Value = "UI" },
+                new Tag() { Id = 3, Value = "Desktop" },
+                new Tag() { Id = 4, Value = "API" },
+                new Tag() { Id = 5, Value = "Service" });
         }
     }
 }
