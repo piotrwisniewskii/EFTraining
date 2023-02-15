@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "FIwB2H2TM9ETWQkXS0N4m2mYaKc0EfGFSvR5f48EO1UBCAiQ2eEqIKGwtwQXlhUhepqD8vJEc+bHJNAK7+0cZw==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\piotr\\Desktop\\C#\\ef training\\MyBoards\\MyBoards\\MyBoards.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\piotr\\.nuget\\packages\\microsoft.extensions.apidescription.server\\3.0.0\\microsoft.extensions.apidescription.server.3.0.0.nupkg.sha512",
+    "C:\\Users\\piotr\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\piotr\\.nuget\\packages\\swashbuckle.aspnetcore\\6.2.3\\swashbuckle.aspnetcore.6.2.3.nupkg.sha512",
+    "C:\\Users\\piotr\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.2.3\\swashbuckle.aspnetcore.swagger.6.2.3.nupkg.sha512",
+    "C:\\Users\\piotr\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.2.3\\swashbuckle.aspnetcore.swaggergen.6.2.3.nupkg.sha512",
+    "C:\\Users\\piotr\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.2.3\\swashbuckle.aspnetcore.swaggerui.6.2.3.nupkg.sha512"
+  ],
+  "logs": []
+}

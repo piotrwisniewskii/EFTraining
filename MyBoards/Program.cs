@@ -1,76 +1,41 @@
-using Microsoft.EntityFrameworkCore;
-using MyBoards.Entities;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddRazorPages();
-builder.Services.AddDbContext<MyBoardsContext>(
-        option =>option.UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))    
-    );
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-using var scope = app.Services.CreateScope();
-var dbContext = scope.ServiceProvider.GetService<MyBoardsContext>();
-
-var pendingMigrations = dbContext.Database.GetPendingMigrations();
-
-if(pendingMigrations.Any())
+var summaries = new[]
 {
-    dbContext.Database.Migrate();
-}
+    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
 
-var users = dbContext.Users.ToList();
-if(!users.Any())
+app.MapGet("/weatherforecast", () =>
 {
-    var user1 = new User()
-    {
-        Email = "user1@test.com",
-        FullName = "User One",
-        Adress = new Adress()
-        {
-            City = "Waszawa",
-            Street = "Szeroka"
-        }
-    };
-
-    var user2 = new User()
-    {
-        Email = "user2@test.com",
-        FullName = "User Two",
-        Adress = new Adress()
-        {
-            City = "Krakow",
-            Street = "Dluga"
-        }
-    };
-
-    dbContext.Users.AddRange(user1,user2);
-    dbContext.SaveChanges();
-}
-
-app.MapGet("data", (MyBoardsContext db) =>
-{
-    var tags = db.Tags.ToList();
-    return tags;
-});
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-
-app.UseRouting();
-
-app.UseAuthorization();
-
-app.MapRazorPages();
+    var forecast = Enumerable.Range(1, 5).Select(index =>
+        new WeatherForecast
+        (
+            DateTime.Now.AddDays(index),
+            Random.Shared.Next(-20, 55),
+            summaries[Random.Shared.Next(summaries.Length)]
+        ))
+        .ToArray();
+    return forecast;
+})
+.WithName("GetWeatherForecast");
 
 app.Run();
+
+internal record WeatherForecast(DateTime Date, int TemperatureC, string? Summary)
+{
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
