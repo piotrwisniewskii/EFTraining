@@ -67,14 +67,18 @@ if(!users.Any())
 
 app.MapGet("data", async (MyBoardsContext db) =>
 {
-    var user = await db.Users
-    .Include(u=>u.Comments).ThenInclude(c=>c.WorkItem)
-    .Include(a=>a.Adress)
-    .FirstAsync(u => u.Id == Guid.Parse("68366DBE-0809-490F-CC1D-08DA10AB0E61"));
+    var workItem = new Epic()
+    {
+        Id = 2
+    };
 
+    var entry = db.Attach(workItem);
+    entry.State = EntityState.Deleted;
+
+    db.SaveChanges();
     //var userComments = await db.Comments.Where(c => c.AuthorId == user.Id).ToListAsync();
 
-    return user;
+    return workItem;
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
