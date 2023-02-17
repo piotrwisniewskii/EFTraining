@@ -78,13 +78,31 @@ app.MapPost("update", async (MyBoardsContext db) =>
 {
     Epic epic = await db.Epic.FirstAsync(epic => epic.Id == 1);
 
-    epic.Area = "Updated area";
-    epic.Priority= 1;
-    epic.StartDate = DateTime.Now;
+    var rejectedState = await db.WorkItemStates.FirstAsync(a => a.Value == "Rejected");
+
+    epic.State = rejectedState;
+
+    epic.StateId = 1;
 
     await db.SaveChangesAsync();
     return epic;
 });
+
+app.MapPost("create", async (MyBoardsContext db) =>
+{
+    Tag tag = new Tag()
+    {
+        Value = "EF"
+    };
+
+    await db.Tags.AddAsync(tag);
+    await db.SaveChangesAsync();
+
+    return tag;
+
+});
+
+
 
 app.Run();
 
