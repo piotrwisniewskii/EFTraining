@@ -60,11 +60,18 @@ if(!users.Any())
     dbContext.SaveChanges();
 }
 
-app.MapGet("data", (MyBoardsContext db) =>
+app.MapGet("data", async (MyBoardsContext db) =>
 {
-    var epic = db.Epic.First();
-    var user = db.Users.First(u => u.FullName == "User One");
-    return new {epic, user };
+    var authorsCommentCounts = await db.Comments
+    .GroupBy(c => c.AuthorId)
+    .Select(g => new { g.Key, Count = g.Count() })
+    .ToListAsync();
+
+    var topAuthor = authorsCommentCounts.First(a => a.Count == authorsCommentCounts.Max(acc => acc.Count));
+
+    var userDetails = db.Users.First(u => u.Id == topAuthor.Key);
+
+    return new {userDetails, commentCount = topAuthor.Count};
 });
 
 app.Run();
