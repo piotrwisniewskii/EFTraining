@@ -60,5 +60,12 @@ if(!users.Any())
     dbContext.SaveChanges();
 }
 
+app.MapGet("data", (MyBoardsContext db) =>
+{
+    var epic = db.Epic.First();
+    var user = db.Users.First(u => u.FullName == "User One");
+    return new {epic, user };
+});
+
 app.Run();
 
