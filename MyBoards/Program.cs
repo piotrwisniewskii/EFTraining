@@ -1,11 +1,17 @@
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using MyBoards.Entities;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
  
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.Configure<JsonOptions>(options =>
+{
+    options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddDbContext<MyBoardsContext>(
     option =>option.UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
@@ -62,16 +68,15 @@ if(!users.Any())
 
 app.MapGet("data", async (MyBoardsContext db) =>
 {
-    var authorsCommentCounts = await db.Comments
-    .GroupBy(c => c.AuthorId)
-    .Select(g => new { g.Key, Count = g.Count() })
-    .ToListAsync();
+    var user = await db.Users
+    .Include(u=>u.Comments)
+    .Include(a=>a.Adress)
+    .FirstAsync(u => u.Id == Guid.Parse("68366DBE-0809-490F-CC1D-08DA10AB0E61"));
 
-    var topAuthor = authorsCommentCounts.First(a => a.Count == authorsCommentCounts.Max(acc => acc.Count));
 
-    var userDetails = db.Users.First(u => u.Id == topAuthor.Key);
+    //var userComments = await db.Comments.Where(c => c.AuthorId == user.Id).ToListAsync();
 
-    return new {userDetails, commentCount = topAuthor.Count};
+    return user;
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
@@ -90,15 +95,25 @@ app.MapPost("update", async (MyBoardsContext db) =>
 
 app.MapPost("create", async (MyBoardsContext db) =>
 {
-    Tag tag = new Tag()
+    var adress = new Adress()
     {
-        Value = "EF"
+        Id = Guid.Parse("b323dd7c-776a-4cf6-a92a-12df154b4a2c"),
+        City = "Kraków",
+        Country = "Poland",
+        Street = "D³uga"
     };
 
-    await db.Tags.AddAsync(tag);
+    var user = new User()
+    {
+        Email = "user@test.com",
+        FullName = "Test User",
+        Adress = adress,
+    };
+
+    db.Users.Add(user);
     await db.SaveChangesAsync();
 
-    return tag;
+    return user;
 
 });
 
