@@ -31,6 +31,6 @@ namespace MyBoards.Entities
 
         public List<Tag> Tags { get; set; }
 
-        //public List<WorkItemTag> WorkItemTags { get; set; } = new List<WorkItemTag>(); 
+        //public List<WorkItemTag> WorkItemTag { get; set; } = new List<WorkItemTag>(); 
     }
 }

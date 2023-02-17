@@ -69,10 +69,9 @@ if(!users.Any())
 app.MapGet("data", async (MyBoardsContext db) =>
 {
     var user = await db.Users
-    .Include(u=>u.Comments)
+    .Include(u=>u.Comments).ThenInclude(c=>c.WorkItem)
     .Include(a=>a.Adress)
     .FirstAsync(u => u.Id == Guid.Parse("68366DBE-0809-490F-CC1D-08DA10AB0E61"));
-
 
     //var userComments = await db.Comments.Where(c => c.AuthorId == user.Id).ToListAsync();
 
@@ -115,6 +114,18 @@ app.MapPost("create", async (MyBoardsContext db) =>
 
     return user;
 
+});
+
+app.MapDelete("delete", async (MyBoardsContext db) =>
+{
+    var workitemTags = await db.WorkItemTag.Where(c => c.WorkItemId == 12).ToListAsync();
+    db.WorkItemTag.RemoveRange(workitemTags);
+
+    var workItem = await db.WorkItems.FirstAsync(c => c.Id == 16);
+
+    db.RemoveRange(workItem);
+
+    await db.SaveChangesAsync();
 });
 
 
