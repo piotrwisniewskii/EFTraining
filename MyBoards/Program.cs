@@ -74,5 +74,17 @@ app.MapGet("data", async (MyBoardsContext db) =>
     return new {userDetails, commentCount = topAuthor.Count};
 });
 
+app.MapPost("update", async (MyBoardsContext db) =>
+{
+    Epic epic = await db.Epic.FirstAsync(epic => epic.Id == 1);
+
+    epic.Area = "Updated area";
+    epic.Priority= 1;
+    epic.StartDate = DateTime.Now;
+
+    await db.SaveChangesAsync();
+    return epic;
+});
+
 app.Run();
 
