@@ -1,10 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BenchmarkDotNet.Attributes;
+using Microsoft.EntityFrameworkCore;
 using MyBoards.Entities;
 
 namespace MyBoards.Benchmark
 {
+    [MemoryDiagnoser]
     public class TrackingBenchmark
     {
+        [Benchmark]
         public int WithTracking()
         {
             var optionsBuilder = new DbContextOptionsBuilder<MyBoardsContext>()
@@ -16,7 +19,8 @@ namespace MyBoards.Benchmark
 
             return comments.Count;
         }
-        
+
+        [Benchmark]
         public int WithNoTracking()
         {
             var optionsBuilder = new DbContextOptionsBuilder<MyBoardsContext>()
