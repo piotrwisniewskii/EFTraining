@@ -67,18 +67,15 @@ if(!users.Any())
 
 app.MapGet("data", async (MyBoardsContext db) =>
 {
-    var workItem = new Epic()
-    {
-        Id = 2
-    };
 
-    var entry = db.Attach(workItem);
-    entry.State = EntityState.Deleted;
+    var staties = db.WorkItemStates
+    .AsNoTracking()
+    .ToList();
 
-    db.SaveChanges();
+    var entries1 = db.ChangeTracker.Entries();
     //var userComments = await db.Comments.Where(c => c.AuthorId == user.Id).ToListAsync();
 
-    return workItem;
+    return staties;
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
