@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using MyBoards.Entities;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
  
@@ -69,10 +70,13 @@ app.MapGet("data", async (MyBoardsContext db) =>
 {
 
     var staties = db.WorkItemStates
-    .AsNoTracking()
-    .ToList();
+    .FromSqlRaw(@"Select wis.Id,wis.Value
+FROM WorkItemStates wis
+JOIN WorkItems wi on wi.StateId = wis.Id
+Group by wis.Id, wis.Value
+HAVING COUNT(*) > 85").ToList();
 
-    var entries1 = db.ChangeTracker.Entries();
+    var entries = db.ChangeTracker.Entries();
     //var userComments = await db.Comments.Where(c => c.AuthorId == user.Id).ToListAsync();
 
     return staties;
