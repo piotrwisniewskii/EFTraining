@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using MyBoards.Dto;
 using MyBoards.Entities;
+using System.Linq.Expressions;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
- 
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JsonOptions>(options =>
@@ -13,8 +15,8 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddDbContext<MyBoardsContext>(
-    option =>option
-    .UseLazyLoadingProxies()
+    option => option
+    //.UseLazyLoadingProxies()
     .UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
     );
 
@@ -31,13 +33,13 @@ using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetService<MyBoardsContext>();
 
 var pendingMigrations = dbContext.Database.GetPendingMigrations();
-if(pendingMigrations.Any())
+if (pendingMigrations.Any())
 {
     dbContext.Database.Migrate();
 }
 
 var users = dbContext.Users.ToList();
-if(!users.Any())
+if (!users.Any())
 {
     var user1 = new User()
     {
@@ -66,17 +68,58 @@ if(!users.Any())
     dbContext.SaveChanges();
 }
 
+app.MapGet("pagination", async (MyBoardsContext db) =>
+{
+    // input
+    var filter = "a";
+    string sortBy = "FullName"; //"FullName" "Email" null
+    bool sortByDescending = false;
+    int pageNumber = 1;
+    int pageSize = 10;
+
+    var query = db.Users
+    .Where(u => filter == null || (u.Email.Contains(filter.ToLower()) || u.FullName.ToLower().Contains(filter.ToLower())));
+
+    var totalCount = query.Count();
+
+    if(sortBy != null)
+    {
+
+        var columnsSelector = new Dictionary<string, Expression<Func<User, object>>>
+        {
+            {nameof(User.Email),user =>user.Email},
+            {nameof(User.FullName),user =>user.FullName},
+        };
+        var sortByExpression = columnsSelector[sortBy];
+        query = sortByDescending
+        ? query.OrderByDescending(sortByExpression) 
+        : query.OrderBy(sortByExpression);
+
+        query.OrderBy(sortByExpression);
+    }
+
+   var queryPaginated =  query.Skip(pageSize * (pageNumber - 1))
+         .Take(pageSize)
+         .ToList();
+
+    var pagedResult = new PagedResult<User>(queryPaginated, totalCount, pageSize, pageNumber);
+
+    return pagedResult;
+
+});
+
+
 app.MapGet("data", async (MyBoardsContext db) =>
 {
 
     var withAdress = true;
-   
+
     var users = db.Users
     .First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
 
-   if(withAdress)
+    if (withAdress)
     {
-        var rsult = new { Fullname = users.FullName, Adress = $"{users.Adress.Street} {users.Adress.City}"};
+        var rsult = new { Fullname = users.FullName, Adress = $"{users.Adress.Street} {users.Adress.City}" };
         return rsult;
     }
     return new { Fullname = users.FullName, Adress = "-" };
@@ -123,7 +166,7 @@ app.MapPost("create", async (MyBoardsContext db) =>
 app.MapDelete("delete", async (MyBoardsContext db) =>
 {
     var user = await db.Users
-    .Include(u=>u.Comments)
+    .Include(u => u.Comments)
     .FirstAsync(u => u.Id == Guid.Parse("4EBB526D-2196-41E1-CBDA-08DA10AB0E61"));
 
     db.Users.Remove(user);
