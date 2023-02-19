@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using MyBoards.Entities;
 using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
  
@@ -15,7 +13,9 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 builder.Services.AddDbContext<MyBoardsContext>(
-    option =>option.UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
+    option =>option
+    .UseLazyLoadingProxies()
+    .UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
     );
 
 var app = builder.Build();
@@ -68,7 +68,18 @@ if(!users.Any())
 
 app.MapGet("data", async (MyBoardsContext db) =>
 {
-    var topAuthors = db.Adresses.Where(a => a.Coordinate.Latitude > 10);
+
+    var withAdress = true;
+   
+    var users = db.Users
+    .First(u => u.Id == Guid.Parse("EBFBD70D-AC83-4D08-CBC6-08DA10AB0E61"));
+
+   if(withAdress)
+    {
+        var rsult = new { Fullname = users.FullName, Adress = $"{users.Adress.Street} {users.Adress.City}"};
+        return rsult;
+    }
+    return new { Fullname = users.FullName, Adress = "-" };
 });
 
 app.MapPost("update", async (MyBoardsContext db) =>
