@@ -19,7 +19,6 @@ builder.Services.AddDbContext<MyBoardsContext>(
     //.UseLazyLoadingProxies()
     .UseSqlServer(builder.Configuration.GetConnectionString("MyBoardsConnectionString"))
     );
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -84,7 +83,6 @@ app.MapGet("pagination", async (MyBoardsContext db) =>
 
     if(sortBy != null)
     {
-
         var columnsSelector = new Dictionary<string, Expression<Func<User, object>>>
         {
             {nameof(User.Email),user =>user.Email},
