@@ -3,11 +3,15 @@ using Microsoft.EntityFrameworkCore;
 using MyBoards;
 using MyBoards.Dto;
 using MyBoards.Entities;
+using MyBoards.Sieve;
+using Sieve.Services;
 using System.Linq.Expressions;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JsonOptions>(options =>
