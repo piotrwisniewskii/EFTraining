@@ -4,6 +4,7 @@ using MyBoards;
 using MyBoards.Dto;
 using MyBoards.Entities;
 using MyBoards.Sieve;
+using Sieve.Models;
 using Sieve.Services;
 using System.Linq.Expressions;
 using System.Text.Json.Serialization;
@@ -11,13 +12,13 @@ using System.Text.Json.Serialization;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
 builder.Services.AddDbContext<MyBoardsContext>(
     option => option
@@ -88,7 +89,7 @@ app.MapGet("pagination", async (MyBoardsContext db) =>
 
     var totalCount = query.Count();
 
-    if(sortBy != null)
+    if (sortBy != null)
     {
         var columnsSelector = new Dictionary<string, Expression<Func<User, object>>>
         {
@@ -97,15 +98,15 @@ app.MapGet("pagination", async (MyBoardsContext db) =>
         };
         var sortByExpression = columnsSelector[sortBy];
         query = sortByDescending
-        ? query.OrderByDescending(sortByExpression) 
+        ? query.OrderByDescending(sortByExpression)
         : query.OrderBy(sortByExpression);
 
         query.OrderBy(sortByExpression);
     }
 
-   var queryPaginated =  query.Skip(pageSize * (pageNumber - 1))
-         .Take(pageSize)
-         .ToList();
+    var queryPaginated = query.Skip(pageSize * (pageNumber - 1))
+          .Take(pageSize)
+          .ToList();
 
     var pagedResult = new PagedResult<User>(queryPaginated, totalCount, pageSize, pageNumber);
 
@@ -118,7 +119,7 @@ app.MapGet("data", async (MyBoardsContext db) =>
 {
 
     var users = await db.Users
-    .Include(u=>u.Adress)
+    .Include(u => u.Adress)
     .Where(u => u.Adress.Country == "Albania")
     .ToListAsync();
 
@@ -182,7 +183,34 @@ app.MapDelete("delete", async (MyBoardsContext db) =>
     await db.SaveChangesAsync();
 });
 
+app.MapPost("sieve", async ([Microsoft.AspNetCore.Mvc.FromBody] SieveModel query, ISieveProcessor sieveProcessor, MyBoardsContext db) =>
+{
 
+    var epics = db.Epic
+    .Include(e => e.Author)
+    .AsQueryable();
+
+    var dtos = await sieveProcessor
+     .Apply(query, epics)
+     .Select(e => new EpicDto()
+     {
+         Id = e.Id,
+         Area = e.Area,
+         Priority = e.Priority,
+         StartDate = e.StartDate,
+         AuthorFullName = e.Author.FullName
+     })
+     .ToListAsync();
+
+    var totalCount = await sieveProcessor
+    .Apply(query, epics, applyPagination: false, applySorting: false)
+    .CountAsync();
+
+    var result = new PagedResult<EpicDto>(dtos, totalCount, query.PageSize.Value, query.Page.Value);
+
+    return result;
+
+});
 
 app.Run();
 

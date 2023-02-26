@@ -24,10 +24,11 @@ namespace MyBoards.Sieve
             mapper.Property<Epic>(e => e.StartDate)
                  .CanSort()
                  .CanFilter();
-            
+
             mapper.Property<Epic>(e => e.Author.FullName)
-                 .CanSort()
-                 .CanFilter();
+                .CanSort()
+                .CanFilter()
+                .HasName("authorFullName");
 
             return mapper;
 
