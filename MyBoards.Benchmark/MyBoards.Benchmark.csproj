@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.13.5" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="6.0.14" />
   </ItemGroup>
 

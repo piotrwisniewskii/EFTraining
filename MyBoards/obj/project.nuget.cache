@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "qZ4F+/3/Xg8L4XyN6+3h7z/x1CLSz1X3kgF/qAEA+HLADTRF1/YaOWgMp5kddRN2NJ26sdGxw1ifHcijS5OuBA==",
+  "dgSpecHash": "S1RnA55q4Jia4sIyInR+fkQhmQvV95PfXVKTLfNAT00wPwQKSPFyTJQEMhtQFs3gQgO+eASF35M6uUMBjh9+yw==",
   "success": true,
   "projectFilePath": "C:\\Users\\piotr\\Desktop\\C#\\ef training\\MyBoards\\MyBoards\\MyBoards.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\piotr\\.nuget\\packages\\bogus\\34.0.2\\bogus.34.0.2.nupkg.sha512",
     "C:\\Users\\piotr\\.nuget\\packages\\castle.core\\4.4.1\\castle.core.4.4.1.nupkg.sha512",
     "C:\\Users\\piotr\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\piotr\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",
