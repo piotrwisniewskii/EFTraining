@@ -9,7 +9,10 @@ namespace MyBoards
         {
             var locale = "pl";
 
+            Randomizer.Seed = new Random(911); // generowanie tych samych danych
+
             var addressGenerator = new Faker<Adress>(locale)
+                //.StrictMode(true)
                 .RuleFor(a => a.City, f => f.Address.City())
                 .RuleFor(a => a.Country, f => f.Address.Country())
                 .RuleFor(a => a.PostalCode, f => f.Address.ZipCode())
