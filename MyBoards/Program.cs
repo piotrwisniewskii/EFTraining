@@ -109,22 +109,20 @@ app.MapGet("pagination", async (MyBoardsContext db) =>
 
 app.MapGet("data", async (MyBoardsContext db) =>
 {
-    //var userFullNames =await db.Users
-    //.Include(u => u.Adress)
-    //.Where(u => u.Adress.Country == "Albania")
-    //.Select(u=>u.FullName)
-    //.ToListAsync();
-    
-    var userFullNames =await db.Users
-    .Include(u => u.Adress)
-    .Include(u=>u.Comments)
+
+    var users = await db.Users
+    .Include(u=>u.Adress)
     .Where(u => u.Adress.Country == "Albania")
-    .SelectMany(u => u.Comments)
-    .Select(c => c.Message)
     .ToListAsync();
 
-   
-    return userFullNames;
+    foreach (var user in users)
+    {
+        var usercomments = db.Comments.Where(c => c.AuthorId == user.Id).ToList();
+        foreach (var comments in user.Comments)
+        {
+
+        }
+    }
 
 });
 
