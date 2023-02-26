@@ -10,6 +10,8 @@ namespace MyBoards.Entities.Configurations
            builder.HasOne(u => u.Adress)
                 .WithOne(a => a.User)
                 .HasForeignKey<Adress>(a => a.UserId);
+
+            builder.HasIndex(u => new { u.Email, u.FullName });
         }
     }
 }
